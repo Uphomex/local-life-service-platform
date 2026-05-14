@@ -1,0 +1,105 @@
+# ============================================================
+# 本地生活服务平台 - Docker Compose配置
+# ============================================================
+# 此文件定义了项目所需的所有容器服务配置。
+# 使用 `docker-compose up -d` 命令启动所有服务。
+
+# Docker Compose版本
+version: '3.8'
+
+# ---------------------------
+# 服务定义
+# ---------------------------
+services:
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0                    # 使用MySQL 8.0镜像
+    container_name: local-life-mysql     # 容器名称
+    ports:
+      - "3306:3306"                     # 端口映射：宿主机:容器
+    environment:
+      MYSQL_ROOT_PASSWORD: root          # 根密码
+      MYSQL_DATABASE: local_life_db      # 自动创建的数据库名称
+      MYSQL_USER: admin                  # 应用使用的用户名
+      MYSQL_PASSWORD: password           # 应用使用的密码
+    volumes:
+      - mysql_data:/var/lib/mysql        # 数据持久化卷
+      - ./backend/src/main/resources/db/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql    # 初始化SQL脚本
+      - ./backend/src/main/resources/db/data.sql:/docker-entrypoint-initdb.d/2_data.sql        # 初始化数据
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Redis缓存服务
+  redis:
+    image: redis:6.2                     # 使用Redis 6.2镜像
+    container_name: local-life-redis     # 容器名称
+    ports:
+      - "6379:6379"                     # 端口映射
+    volumes:
+      - redis_data:/data                 # 数据持久化卷
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 20s
+      retries: 10
+
+  # Zookeeper服务（Kafka依赖）
+  zookeeper:
+    image: wurstmeister/zookeeper:3.4.6  # Zookeeper镜像
+    container_name: local-life-zookeeper # 容器名称
+    ports:
+      - "2181:2181"                     # 端口映射
+
+  # Kafka消息队列服务
+  kafka:
+    image: wurstmeister/kafka:2.13-2.8.1 # Kafka镜像
+    container_name: local-life-kafka     # 容器名称
+    ports:
+      - "9092:9092"                     # 端口映射
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost      # 公告地址
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181    # Zookeeper连接地址
+      # 自动创建所需的Kafka主题
+      KAFKA_CREATE_TOPICS: "order_created:1:1,order_status_changed:1:1,order_assigned:1:1,order_completed:1:1"
+    depends_on:
+      - zookeeper                       # 依赖Zookeeper
+
+  # 后端服务
+  backend:
+    build: ./backend                     # 从backend目录构建Docker镜像
+    container_name: local-life-backend   # 容器名称
+    ports:
+      - "8080:8080"                     # 端口映射
+    environment:
+      SPRING_PROFILES_ACTIVE: docker                      # 激活docker配置文件
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/local_life_db
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_REDIS_HOST: redis
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      mysql:
+        condition: service_healthy       # 等待MySQL健康检查通过
+      redis:
+        condition: service_healthy       # 等待Redis健康检查通过
+      kafka:
+        condition: service_started       # 等待Kafka启动
+
+  # 前端服务
+  frontend:
+    build: ./frontend                    # 从frontend目录构建Docker镜像
+    container_name: local-life-frontend  # 容器名称
+    ports:
+      - "5173:5173"                     # 端口映射
+    environment:
+      VITE_API_URL: http://localhost:8080  # API地址
+    depends_on:
+      - backend                         # 依赖后端服务
+
+# ---------------------------
+# 数据卷定义
+# ---------------------------
+volumes:
+  mysql_data:                           # MySQL数据卷
+  redis_data:                           # Redis数据卷
