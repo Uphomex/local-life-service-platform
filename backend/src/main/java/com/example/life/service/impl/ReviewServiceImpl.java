@@ -1,4 +1,3 @@
-
 package com.example.life.service.impl;
 
 import com.example.life.common.ServiceException;
@@ -10,6 +9,7 @@ import com.example.life.mapper.OrderItemMapper;
 import com.example.life.mapper.OrderMapper;
 import com.example.life.mapper.ReviewMapper;
 import com.example.life.service.ReviewService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,8 +51,8 @@ public class ReviewServiceImpl implements ReviewService {
         }
         
         List<Review> existingReviews = reviewMapper.selectList(
-                reviewMapper.lambdaQuery().eq(Review::getOrderId, orderId));
-        
+                new LambdaQueryWrapper<Review>().eq(Review::getOrderId, orderId));
+
         if (!existingReviews.isEmpty()) {
             throw new ServiceException(400, "该订单已评价");
         }
@@ -71,8 +71,8 @@ public class ReviewServiceImpl implements ReviewService {
         reviewMapper.insert(review);
         
         List<OrderItem> items = orderItemMapper.selectList(
-                orderItemMapper.lambdaQuery().eq(OrderItem::getOrderId, orderId));
-        
+                new LambdaQueryWrapper<OrderItem>().eq(OrderItem::getOrderId, orderId));
+
         for (OrderItem item : items) {
             Review productReview = Review.builder()
                     .orderId(orderId)

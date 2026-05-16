@@ -59,8 +59,8 @@ export const useUserStore = defineStore('user', () => {
    * @param username 用户名
    * @param password 密码
    */
-  async function login(username: string, password: string) {
-    const result = await apiLogin(username, password)
+  async function login(loginUsername: string, loginPassword: string) {
+    const result = await apiLogin(loginUsername, loginPassword)
     userId.value = result.userId
     username.value = result.username
     role.value = result.role

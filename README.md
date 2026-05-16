@@ -179,4 +179,4 @@ docker-compose up -d
 
 ## License
 
-MIT License
+- v1.0.1

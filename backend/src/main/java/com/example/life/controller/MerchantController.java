@@ -28,7 +28,7 @@ public class MerchantController {
     
     @PostMapping("/register")
     @Operation(summary = "商家入驻", description = "商家注册入驻")
-    public ResponseEntity<ResponseResult<Void>> register(@Valid @RequestBody MerchantRegisterRequest request) {
+    public ResponseEntity<ResponseResult<String>> register(@Valid @RequestBody MerchantRegisterRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         

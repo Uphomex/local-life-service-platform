@@ -1,49 +1,58 @@
-server:
-  port: 8080
 
+# ============================================================
+# 本地生活服务平台 - Docker环境配置
+# ============================================================
+# 此配置文件覆盖application.yml中的默认配置，用于Docker容器环境。
+# Docker环境使用容器化的数据库、Redis、Kafka服务。
+
+# ---------------------------
+# 数据源配置（Docker环境）
+# ---------------------------
 spring:
   datasource:
+    # Docker环境使用容器化MySQL，服务名为mysql
     url: jdbc:mysql://mysql:3306/local_life_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    username: admin
-    password: password
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
 
+  # ---------------------------
+  # Redis配置（Docker环境）
+  # ---------------------------
   redis:
-    host: redis
+    # Docker环境使用容器化Redis，服务名为redis
+    host: 127.0.0.1
     port: 6379
+    password: 123456
+    timeout: 6000ms
 
+  # ---------------------------
+  # Kafka配置（Docker环境）
+  # ---------------------------
   kafka:
+    # Docker环境使用容器化Kafka，服务名为kafka
     bootstrap-servers: kafka:9092
-    producer:
-      retries: 3
-      batch-size: 16384
-      buffer-memory: 33554432
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      group-id: local-life-service
-      enable-auto-commit: true
-      auto-commit-interval: 100ms
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
-mybatis-plus:
-  configuration:
-    map-underscore-to-camel-case: true
-  mapper-locations: classpath:mapper/*.xml
-  global-config:
-    db-config:
-      id-type: auto
-
-jwt:
-  secret: local-life-service-platform-jwt-secret-key-2024
-  expire-time: 86400000
-
-knife4j:
-  enable: true
-  setting:
-    language: zh_cn
-
+# ---------------------------
+# 日志配置（Docker环境）
+# ---------------------------
 logging:
   level:
+    # 根日志级别
+    root: INFO
+    # 应用日志级别
     com.example.life: INFO
+  pattern:
+    # 日志输出格式（适合容器环境）
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# ---------------------------
+# SpringDoc API文档配置（Docker环境）
+# ---------------------------
+springdoc:
+  api-docs:
+    # Docker环境启用API文档
+    enabled: true
+  swagger-ui:
+    # Docker环境启用Swagger UI
+    enabled: true
+    path: /swagger-ui.html

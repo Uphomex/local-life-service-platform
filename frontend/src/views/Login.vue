@@ -38,7 +38,7 @@ async function handleLogin() {
   <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 400px;">
       <h2 style="text-align: center; margin-bottom: 30px; color: #333;">本地生活服务平台</h2>
-      <ElForm model="form" label-width="80px">
+      <ElForm :model="form" label-width="80px">
         <ElFormItem label="用户名">
           <ElInput 
             v-model="form.username" 

@@ -72,7 +72,7 @@ public class AuthController {
      */
     @PostMapping("/register")
     @Operation(summary = "用户注册", description = "用户注册接口，创建新用户账户")
-    public ResponseEntity<ResponseResult<Void>> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<ResponseResult<String>> register(@Valid @RequestBody RegisterRequest request) {
         // 调用用户服务执行注册逻辑
         userService.register(request);
         

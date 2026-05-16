@@ -47,7 +47,7 @@ public class ProductController {
     
     @DeleteMapping("/merchant/{merchantId}/{productId}")
     @Operation(summary = "删除商品", description = "商家删除商品")
-    public ResponseEntity<ResponseResult<Void>> delete(
+    public ResponseEntity<ResponseResult<String>> delete(
             @PathVariable Long merchantId,
             @PathVariable Long productId) {
         productService.deleteProduct(merchantId, productId);
@@ -56,7 +56,7 @@ public class ProductController {
     
     @PutMapping("/merchant/{merchantId}/{productId}/status")
     @Operation(summary = "更新商品状态", description = "商家更新商品上下架状态")
-    public ResponseEntity<ResponseResult<Void>> updateStatus(
+    public ResponseEntity<ResponseResult<String>> updateStatus(
             @PathVariable Long merchantId,
             @PathVariable Long productId,
             @RequestParam String status) {

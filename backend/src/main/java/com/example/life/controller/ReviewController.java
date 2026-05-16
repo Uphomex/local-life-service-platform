@@ -64,7 +64,7 @@ public class ReviewController {
     
     @PutMapping("/merchant/{merchantId}/{reviewId}/reply")
     @Operation(summary = "回复评价", description = "商家回复评价")
-    public ResponseEntity<ResponseResult<Void>> reply(
+    public ResponseEntity<ResponseResult<String>> reply(
             @PathVariable Long merchantId,
             @PathVariable Long reviewId,
             @RequestParam String reply) {
@@ -74,7 +74,7 @@ public class ReviewController {
     
     @DeleteMapping("/{reviewId}")
     @Operation(summary = "删除评价", description = "用户删除自己的评价")
-    public ResponseEntity<ResponseResult<Void>> delete(@PathVariable Long reviewId) {
+    public ResponseEntity<ResponseResult<String>> delete(@PathVariable Long reviewId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         

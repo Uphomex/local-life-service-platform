@@ -27,7 +27,7 @@ public class RiderController {
     
     @PostMapping("/register")
     @Operation(summary = "骑手注册", description = "用户注册为骑手")
-    public ResponseEntity<ResponseResult<Void>> register(
+    public ResponseEntity<ResponseResult<String>> register(
             @RequestParam String realName,
             @RequestParam String idCard) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -39,7 +39,7 @@ public class RiderController {
     
     @PutMapping("/{riderId}/location")
     @Operation(summary = "更新位置", description = "骑手更新位置信息")
-    public ResponseEntity<ResponseResult<Void>> updateLocation(
+    public ResponseEntity<ResponseResult<String>> updateLocation(
             @PathVariable Long riderId,
             @RequestParam BigDecimal longitude,
             @RequestParam BigDecimal latitude) {
@@ -56,7 +56,7 @@ public class RiderController {
     
     @PostMapping("/{riderId}/order/{orderId}/accept")
     @Operation(summary = "接单", description = "骑手接单")
-    public ResponseEntity<ResponseResult<Void>> acceptOrder(
+    public ResponseEntity<ResponseResult<String>> acceptOrder(
             @PathVariable Long riderId,
             @PathVariable Long orderId) {
         riderService.acceptOrder(riderId, orderId);
@@ -65,7 +65,7 @@ public class RiderController {
     
     @PutMapping("/{riderId}/order/{orderId}/status")
     @Operation(summary = "更新订单状态", description = "骑手更新订单配送状态")
-    public ResponseEntity<ResponseResult<Void>> updateOrderStatus(
+    public ResponseEntity<ResponseResult<String>> updateOrderStatus(
             @PathVariable Long riderId,
             @PathVariable Long orderId,
             @RequestParam String status) {
@@ -75,7 +75,7 @@ public class RiderController {
     
     @PutMapping("/{riderId}/status")
     @Operation(summary = "更新骑手状态", description = "骑手更新在线状态")
-    public ResponseEntity<ResponseResult<Void>> updateStatus(
+    public ResponseEntity<ResponseResult<String>> updateStatus(
             @PathVariable Long riderId,
             @RequestParam String status) {
         riderService.updateRiderStatus(riderId, status);

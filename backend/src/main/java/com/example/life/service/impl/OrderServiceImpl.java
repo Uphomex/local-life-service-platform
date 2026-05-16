@@ -1,4 +1,3 @@
-
 /**
  * 订单服务实现类
  * 
@@ -41,6 +40,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 /**
  * 订单服务实现
@@ -224,8 +225,8 @@ public class OrderServiceImpl implements OrderService {
         
         // 获取订单项列表
         List<OrderItem> items = orderItemMapper.selectList(
-                orderItemMapper.lambdaQuery().eq(OrderItem::getOrderId, orderId));
-        
+                new LambdaQueryWrapper<OrderItem>().eq(OrderItem::getOrderId, orderId));
+
         // 获取商家信息
         Merchant merchant = merchantMapper.selectById(order.getMerchantId());
         

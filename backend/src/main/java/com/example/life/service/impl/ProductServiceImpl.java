@@ -1,4 +1,3 @@
-
 /**
  * 商品服务实现类
  * 
@@ -37,9 +36,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 /**
  * 商品服务实现
@@ -219,9 +221,9 @@ public class ProductServiceImpl implements ProductService {
         
         // 级联删除
         productMapper.deleteById(productId);
-        attributeMapper.delete(attributeMapper.lambdaQuery().eq(ProductAttribute::getProductId, productId));
-        skuMapper.delete(skuMapper.lambdaQuery().eq(ProductSku::getProductId, productId));
-        
+        attributeMapper.delete(new LambdaQueryWrapper<ProductAttribute>().eq(ProductAttribute::getProductId, productId));
+        skuMapper.delete(new LambdaQueryWrapper<ProductSku>().eq(ProductSku::getProductId, productId));
+
         // 删除Redis缓存
         redisTemplate.delete(STOCK_KEY + productId);
         
@@ -269,8 +271,8 @@ public class ProductServiceImpl implements ProductService {
         
         // 获取商品属性
         List<ProductAttribute> attributes = attributeMapper.selectList(
-                attributeMapper.lambdaQuery().eq(ProductAttribute::getProductId, productId));
-        
+                new LambdaQueryWrapper<ProductAttribute>().eq(ProductAttribute::getProductId, productId));
+
         // 获取商品SKU
         List<ProductSku> skus = skuMapper.findByProductId(productId);
         
@@ -355,8 +357,8 @@ public class ProductServiceImpl implements ProductService {
         String lockKey = STOCK_LOCK_KEY + productId;
         
         // 尝试获取分布式锁（30秒过期）
-        Boolean locked = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", 30000);
-        
+        Boolean locked = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", Duration.ofMillis(30000));
+
         // 未能获取锁
         if (locked == null || !locked) {
             return false;

@@ -1,52 +1,115 @@
+# ============================================================
+# 本地生活服务平台 - Spring Boot 主配置文件
+# ============================================================
+# 此文件包含应用的核心配置，包括服务器、数据源、缓存、消息队列等配置。
+# 使用 Spring Profiles 可以切换不同环境的配置（dev、docker等）。
+
+# ---------------------------
+# 服务器配置
+# ---------------------------
 server:
+  # 服务端口（默认8080）
   port: 8080
 
+# ---------------------------
+# Spring 配置
+# ---------------------------
 spring:
+  # 激活的配置文件（dev:开发环境, docker:容器环境）
   profiles:
     active: dev
 
+  # ---------------------------
+  # 数据源配置（MySQL）
+  # ---------------------------
   datasource:
+    # 数据库连接URL
+    # useUnicode: 使用Unicode字符集
+    # characterEncoding: 字符编码
+    # serverTimezone: 时区设置（亚洲/上海）
     url: jdbc:mysql://localhost:3306/local_life_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    username: admin
-    password: password
+    # 数据库用户名
+    username: root
+    # 数据库密码
+    password: 123456
+    # JDBC驱动类（MySQL 8.0+使用com.mysql.cj.jdbc.Driver）
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  # ---------------------------
+  # Redis缓存配置
+  # ---------------------------
   redis:
-    host: localhost
+    # Redis服务器地址
+    host: 127.0.0.1
+    # Redis端口（默认6379）
     port: 6379
-    password: password
+    # Redis密码（如果设置了的话）
+    password: 123456
+    # 连接超时时间（毫秒）
     timeout: 6000ms
 
+  # ---------------------------
+  # Kafka消息队列配置
+  # ---------------------------
   kafka:
+    # Kafka服务器地址
     bootstrap-servers: localhost:9092
     producer:
+      # 消息发送失败重试次数
       retries: 3
+      # 批量发送大小（字节）
       batch-size: 16384
+      # 缓冲区大小（字节）
       buffer-memory: 33554432
+      # Key序列化器
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # Value序列化器
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
+      # 消费者组ID
       group-id: local-life-service
+      # 是否自动提交偏移量
       enable-auto-commit: true
+      # 自动提交间隔（毫秒）
       auto-commit-interval: 100ms
+      # Key反序列化器
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # Value反序列化器
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # 最大拉取记录数
       max-poll-records: 500
 
+# ---------------------------
+# MyBatis Plus 配置
+# ---------------------------
 mybatis-plus:
   configuration:
+    # 是否开启下划线转驼峰命名
     map-underscore-to-camel-case: true
+    # SQL日志实现（开发环境使用StdOutImpl输出到控制台）
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # Mapper XML文件位置
   mapper-locations: classpath:mapper/*.xml
   global-config:
     db-config:
+      # 主键生成策略（AUTO:自增）
       id-type: auto
 
+# ---------------------------
+# JWT 配置
+# ---------------------------
 jwt:
+  # JWT签名密钥（必须保密，生产环境应使用环境变量）
   secret: local-life-service-platform-jwt-secret-key-2024
+  # JWT过期时间（毫秒），此处设置为1天（86400000毫秒）
   expire-time: 86400000
 
+# ---------------------------
+# Knife4j API文档配置
+# ---------------------------
 knife4j:
+  # 是否启用API文档
   enable: true
   setting:
+    # 语言设置（中文）
     language: zh_cn

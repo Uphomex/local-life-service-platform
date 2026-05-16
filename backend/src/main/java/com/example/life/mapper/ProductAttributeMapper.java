@@ -1,4 +1,4 @@
-package main.java.com.example.life.mapper;
+package com.example.life.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.life.entity.ProductAttribute;

@@ -15,14 +15,14 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
+
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<ResponseResult<Void>> handleServiceException(ServiceException e) {
         log.error("Service exception: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ResponseResult.error(e.getCode(), e.getMessage()));
     }
-    
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseResult<Map<String, String>>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
@@ -32,11 +32,12 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        String errorMessage = errors.values().stream().findFirst().orElse("参数校验失败");    // 新增
         log.error("Validation exception: {}", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResponseResult.success(errors));
+                .body(ResponseResult.error(400, errorMessage));     //修改为error()
     }
-    
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseResult<Void>> handleException(Exception e) {
         log.error("Unexpected exception: {}", e.getMessage(), e);

@@ -1,18 +1,59 @@
-server:
-  port: 8080
+# ============================================================
+# 本地生活服务平台 - 开发环境配置
+# ============================================================
+# 此配置文件覆盖application.yml中的默认配置，用于开发环境。
+# 开发环境通常使用本地数据库、禁用缓存等设置。
 
+# ---------------------------
+# 数据源配置（开发环境）
+# ---------------------------
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/local_life_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
-    username: admin
-    password: password
+    # 开发环境使用本地MySQL数据库
+    url: jdbc:mysql://localhost:3306/local_life_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
 
+  # ---------------------------
+  # Redis配置（开发环境）
+  # ---------------------------
   redis:
-    host: localhost
+    host: 127.0.0.1
     port: 6379
-    password: password
+    password: 123456
+    timeout: 6000ms
 
+  # ---------------------------
+  # Kafka配置（开发环境）
+  # ---------------------------
+  kafka:
+    bootstrap-servers: localhost:9092
+
+# ---------------------------
+# 日志配置（开发环境）
+# ---------------------------
 logging:
   level:
+    # 根日志级别
+    root: INFO
+    # 应用日志级别（DEBUG便于开发调试）
     com.example.life: DEBUG
-    org.springframework.security: DEBUG
+    # MyBatis日志级别（显示SQL语句）
+    com.example.life.mapper: DEBUG
+  pattern:
+    # 日志输出格式
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# ---------------------------
+# SpringDoc API文档配置（开发环境）
+# ---------------------------
+springdoc:
+  api-docs:
+    # 启用API文档
+    enabled: true
+  swagger-ui:
+    # 启用Swagger UI
+    enabled: true
+    # Swagger UI访问路径
+    path: /swagger-ui.html
+

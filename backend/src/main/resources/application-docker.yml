@@ -12,17 +12,17 @@ spring:
   datasource:
     # Docker环境使用容器化MySQL，服务名为mysql
     url: jdbc:mysql://mysql:3306/local_life_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    username: admin
-    password: password
+    username: root
+    password: 123456
 
   # ---------------------------
   # Redis配置（Docker环境）
   # ---------------------------
   redis:
     # Docker环境使用容器化Redis，服务名为redis
-    host: redis
+    host: 127.0.0.1
     port: 6379
-    password: password
+    password: 123456
     timeout: 6000ms
 
   # ---------------------------

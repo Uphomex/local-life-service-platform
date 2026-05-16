@@ -62,7 +62,7 @@ public class OrderController {
     
     @PutMapping("/{orderId}/status")
     @Operation(summary = "更新订单状态", description = "更新订单状态")
-    public ResponseEntity<ResponseResult<Void>> updateStatus(
+    public ResponseEntity<ResponseResult<String>> updateStatus(
             @PathVariable Long orderId,
             @RequestParam String status) {
         orderService.updateOrderStatus(orderId, status);
@@ -71,7 +71,7 @@ public class OrderController {
     
     @PutMapping("/{orderId}/complete")
     @Operation(summary = "完成订单", description = "骑手完成订单")
-    public ResponseEntity<ResponseResult<Void>> complete(@PathVariable Long orderId) {
+    public ResponseEntity<ResponseResult<String>> complete(@PathVariable Long orderId) {
         orderService.completeOrder(orderId);
         return ResponseEntity.ok(ResponseResult.success("订单已完成"));
     }

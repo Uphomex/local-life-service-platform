@@ -1,4 +1,4 @@
-package main.java.com.example.life.service;
+package com.example.life.service;
 
 import com.example.life.entity.Review;
 

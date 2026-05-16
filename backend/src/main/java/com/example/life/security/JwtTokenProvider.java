@@ -95,7 +95,7 @@ public class JwtTokenProvider {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        
+
         // 从Claims中获取userId
         return claims.get("userId", Long.class);
     }
@@ -113,7 +113,7 @@ public class JwtTokenProvider {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        
+
         // 从Claims中获取role
         return claims.get("role", String.class);
     }
